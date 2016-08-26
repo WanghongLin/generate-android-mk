@@ -1,0 +1,36 @@
+__generate_android_mk()
+{
+    local cur prev opts fileopts diropts keywords abis platforms
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--help --verbose --type --module --include --cflags --cppflags --ldlibs --shared --static --prebuilt --java --certificate --output --override --append --scan --recursive --abi --platform"
+    keywords="exe shared static pshared pstatic apk papk java top"
+	abis="armeabi armeab-v7a arm64-v8a mips mips64 x86 x86_64"
+    fileopts="-O|--output"
+    diropts="-i|--include|-s|--scan|-c|--certificate"
+	platforms=$(echo android{3.22})
+
+    if [[ ${prev} =~ ${fileopts} ]]; then
+        COMPREPLY=( $(compgen -f -- ${cur}) )
+        return 0
+    elif [[ ${prev} =~ ${diropts} ]]; then
+        COMPREPLY=( $(compgen -d -- ${cur}) )
+        return 0
+    elif [[ ${prev} =~ ${abis} ]]; then
+		COMPREPLY=( $(compgen -W "${abis}" -- ${cur}) )
+	elif [[ ${prev} =~ "type" ]]; then
+        COMPREPLY=( $(compgen -W "${keywords}" -- ${cur}) )
+        return 0
+	elif [[ ${prev} =~ "platform" ]]; then
+		COMPREPLY=( $(compgen -W "${platforms}" -- ${cur}) )
+		return 0
+	fi
+
+    if [[ ${cur} == * ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+complete -F __generate_android_mk generate_android_mk.py
