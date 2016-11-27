@@ -1,0 +1,119 @@
+extends make
+
+snippet module "AOSP base share library module"
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE    := ${1:hello-jni}
+LOCAL_SRC_FILES := $1.c
+
+# An optional list of paths, relative to the NDK *root* directory
+LOCAL_C_INCLUDES :=
+
+# An optional set of compiler flags that will be passed when building C *and* C++ source files.
+LOCAL_CFLAGS :=
+
+# An optional set of compiler flags that will be passed when building C++ source files *only*. They will appear after the LOCAL_CFLAGS on the compiler's command-line.
+LOCAL_CPPFLAGS := 
+
+# Static libraries that you want to include in your module.
+LOCAL_STATIC_LIBRARIES :=
+
+# The libraries you directly link against, name without suffix
+LOCAL_SHARED_LIBRARIES :=
+
+# The list of additional linker flags to be used when building your module. -llog
+LOCAL_LDLIBS :=
+
+# You can pass additional flags to the linker by setting LOCAL_LDFLAGS
+LOCAL_LDFLAGS := 
+
+include $(BUILD_SHARED_LIBRARY)
+endsnippet
+
+snippet sl "Build a static library"
+include $(BUILD_STATIC_LIBRARY)
+endsnippet
+
+snippet pl "Prebuilt share library"
+include $(PREBUILT_SHARED_LIBRARY)
+endsnippet
+
+snippet psl "Prebuilt static library"
+include $(PREBUILT_STATIC_LIBRARY)
+endsnippet
+	
+snippet apk "Build a simple APK"
+LOCAL_PATH := $(call my-dir)
+include $(CLEAR_VARS)
+
+# When linking Java apps and libraries, LOCAL_JAVA_LIBRARIES specifies which sets of java classes to include. 
+LOCAL_JAVA_LIBRARIES := core framework
+
+# List of static libraries to include in the package
+LOCAL_STATIC_JAVA_LIBRARIES := ${1:static-library}
+
+# Build all java files in the java subdirectory
+LOCAL_SRC_FILES := $(call all-subdir-java-files)
+
+# Name of the APK to build
+LOCAL_PACKAGE_NAME := ${2:PackageName}
+
+LOCAL_CERTIFICATE := ${3:platform}
+
+# Tell it to build an APK
+include $(BUILD_PACKAGE)
+endsnippet
+
+snippet papk "Adding a prebuilt APK"
+LOCAL_PATH := $(call my-dir)
+include $(CLEAR_VARS)
+
+# Module name should match apk name to be installed.
+LOCAL_MODULE := $1 
+LOCAL_SRC_FILES := $(LOCAL_MODULE).apk
+LOCAL_MODULE_CLASS := APPS
+LOCAL_MODULE_SUFFIX := $(COMMON_ANDROID_PACKAGE_SUFFIX)
+
+include $(BUILD_PREBUILT)
+endsnippet
+
+snippet sjl "Adding static java library"
+LOCAL_PATH := $(call my-dir)
+include $(CLEAR_VARS)
+
+# Build all java files in the java subdirectory
+LOCAL_SRC_FILES := $(call all-subdir-java-files)
+
+# Any libraries that this library depends on
+LOCAL_JAVA_LIBRARIES := android.test.runner
+
+# The name of the jar file to create
+LOCAL_MODULE := $1
+
+# Build a static jar file.
+include $(BUILD_STATIC_JAVA_LIBRARY)
+endsnippet
+
+# NDK provided variable
+snippet ta "Target arch"
+$(TARGET_ARCH)
+endsnippet
+snippet tp "Target platform"
+$(TARGET_PLATFORM)
+endsnippet
+snippet taa "Target CPU+ABI"
+$(TARGET_ARCH_ABI)
+endsnippet
+
+# NDK provided function maros
+snippet subm "A list of Android.mk in sub-directories"
+include $(call all-subdir-makefiles)
+endsnippet
+snippet subj "A list of java files"
+$(call all-subdir-java-files)
+endsnippet
+snippet im "Import module"
+$(call import-module,${1:module-name})
+endsnippet
