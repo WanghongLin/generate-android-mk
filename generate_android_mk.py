@@ -95,7 +95,7 @@ def find_sources(directory):
     if os.path.isdir(p):
       find_sources(p)
     else:
-      if p.endswith('.c') or p.endswith('.cpp') or p.endswith('.cxx'):
+      if p.endswith('.c') or p.endswith('.cpp') or p.endswith('.cxx') or p.endswith('.S'):
         if len(g_scan_exclude_pattern) == 0 or (len(g_scan_exclude_pattern) > 0 and not re.search(g_scan_exclude_pattern, p)):
           g_scan_sources_list += p + ' \\\n'
   pass
