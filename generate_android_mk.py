@@ -289,9 +289,9 @@ def main():
   else:
     print content
 
-  if (len(opt_abis) > 0 or len(opt_platform) > 0) and len(opt_output) > 0:
-    f = open(os.path.join(os.path.dirname(opt_output), 'Application.mk'), 'w+')
+  if len(opt_abis) > 0 or len(opt_platform) > 0:
     app = ''
+    app += '# Application.mk auto created by gen_android_mk.py\n'
     if len(opt_abis) > 0:
       app += "APP_ABI := " + opt_abis + "\n"
     if len(opt_platform) > 0:
@@ -301,8 +301,12 @@ def main():
         # disable PIE when build executable prior android-16
         if match.group(1) < 16 and opt_template == 'exe':
           app += "APP_PIE := false\n"
-    f.write(app)
-    f.close()
+    if len(opt_output) > 0: 
+      f = open(os.path.join(os.path.dirname(opt_output), 'Application.mk'), 'w+')
+      f.write(app)
+      f.close()
+    else:
+      print app
 
   pass
 
